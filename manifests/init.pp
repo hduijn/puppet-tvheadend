@@ -12,7 +12,11 @@ class tvheadend(
   $oscamrepotype     = 'svn',
   $packages          = ['build-essential','autoconf','git','subversion','pkg-config','libssl-dev','bzip2','wget','dialog'],
   $htsdirs           = ['/home/hts','/home/hts/.hts','/home/hts/.hts/tvheadend','/home/hts/.hts/tvheadend/caclient'],
-  $oscamdirs         = ['/opt/oscam','/opt/oscam/etc','/opt/oscam/etc/cw']
+  $oscamdirs         = ['/opt/oscam','/opt/oscam/etc','/opt/oscam/etc/cw'],
+  $usbbusnr          = '003',  # find usbbus and usbdevnr using lsusb command
+  $usbdevnr          = '003',
+  $resetusingcron    = true,
+  $resethour         = 5,
 )
 {
   package { $packages:
@@ -149,5 +153,30 @@ class tvheadend(
     require     => [File['oscam init'],File['oscam binary'],File['oscam conf'],File['oscam user'],File['oscam server']]
   }
 
+  file { "usbreset binary" :
+    path    => "/usr/local/bin/usbreset",
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0755',
+    source  => 'puppet:///modules/tvheadend/usbreset',
+  }
+  
+  if ( $resetusingcron == true ) {
+    cron { resethts:
+      command => "/usr/local/sbin/resethts.sh",
+      user    => root,
+      hour    => $resethour,
+      minute  => 0,
+      require => File['resethts.sh']
+    }
+  }
+
+  file { "resethts.sh" :
+    path    => "/usr/local/sbin/resethts.sh",
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0755',
+    content => template('tvheadend/resethts.sh.erb'),
+  }
 
 }
