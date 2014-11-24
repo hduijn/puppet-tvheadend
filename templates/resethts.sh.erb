@@ -1,0 +1,6 @@
+#!/bin/bash
+#
+# Reset TVheadend and USB device
+#
+service tvheadend restart @@
+/usr/local/bin/usbreset /dev/bus/usb/<%= @usbbusnr %>/<%= @usbdevnr %>
