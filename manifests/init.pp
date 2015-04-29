@@ -14,7 +14,7 @@ class tvheadend(
   $htsdirs           = ['/home/hts','/home/hts/.hts','/home/hts/.hts/tvheadend','/home/hts/.hts/tvheadend/caclient'],
   $oscamdirs         = ['/opt/oscam','/opt/oscam/etc','/opt/oscam/etc/cw'],
   $usbbusnr          = '003',  # find usbbus and usbdevnr using lsusb command
-  $usbdevnr          = '003',
+  $usbdevnr          = '002',
   $resetusingcron    = true,
   $resethour         = 5,
 )

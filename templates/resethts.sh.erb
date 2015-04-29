@@ -2,5 +2,23 @@
 #
 # Reset TVheadend and USB device
 #
-service tvheadend restart @@
-/usr/local/bin/usbreset /dev/bus/usb/<%= @usbbusnr %>/<%= @usbdevnr %>
+DATUM=[`date '+%Y-%m-%d %H:%M'`]
+STAART=[`tail /var/log/syslog`]
+
+if [ `echo $STAART | grep -c "available for subscription"` -gt 0 ]
+ then
+    echo $DATUM 'restarting tvheadend' >> /var/log/htsreset.log
+    service tvheadend stop @@ >> /var/log/htsreset.log
+    service oscam stop >> /var/log/htsreset.log
+    killall -9 /usr/local/bin/tvheadend @@ >> /var/log/htsreset.log
+    killall -9 /opt/oscam/oscam.bin @@ >> /var/log/htsreset.log
+    /usr/local/bin/usbreset /dev/bus/usb/<%= @usbbusnr %>/<%= @usbdevnr %> >> /var/log/htsreset.log
+    service tvheadend start @@ >> /var/log/htsreset.log
+    service oscam start @@ >> /var/log/htsreset.log
+ fi
+
+
+
+
+
+
